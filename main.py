@@ -1,71 +1,63 @@
-import os,csv
+import os, csv
+voterid= []
+county =[]
+candidates = []
+result = []
+vote_count = 0
+total_votes = 0
+unique_candidate = []
+max_count = 0
+winner = ' '
 
-total_months = 0
-total_profit = 0
-total_change = 0
-greatest_month =''
-lowest_month =''
-max_change = 0
-max_index = 0
-min_change = 0
-min_index = 0
-i = 0
-difference = 0
-max_month = ' '
-min_month = ' '
-total = []
-month =[]
 
-output_path = os.path.join('budget_data_analysed.csv')
-file_path = os.path.join('budget_data.csv')
+input_file = os.path.join('election_data.csv')
+output_file = os.path.join('election_data_analysed.csv')
 
-with open (file_path, 'r',newline='') as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter = ',')
-    csv_header = next(csv_reader)
+with open (input_file, 'r',newline='') as csv_file:
+    reader = csv.reader(csv_file, delimiter=',')
+    header = next(reader)
 
-    for row in csv_reader:
-        total_months += 1
-        total_profit += int(row[1])
-        total.append(row[1])
-        month.append(row[0])
-        
-    #print(month)
-    
-    for i in range(0,len(total)-1):
-        if (total[i] != total[i+1]): 
-            new_change =  int(total[i+1]) - int(total[i])
-            difference = difference + new_change
-            if ( new_change > max_change):
-                max_change = new_change
-                max_index = i+1
-            if ( new_change < min_change):
-                min_change = new_change
-                min_index = i+1
+    for row in reader:
+        voterid.append(row[0])
+        county.append(row[1])
+        candidates.append(row[2])
+
+    total_votes = len(voterid)
+    unique_candidate = set(candidates)
+
+    with open(output_file,'w') as out_file:
+        print('Election Results')
+        print('Election Results', file=out_file)
+        print('-------------------------------')
+        print('-------------------------------',file = out_file)
+        print(f'Total Votes :  {(total_votes)}')   
+        print(f'Total Votes :  {(total_votes)}',file = out_file)    
+        print('-------------------------------')
+        print('-------------------------------',file=out_file)
+
+        for cand in unique_candidate:
+            for cand2 in candidates:
+                if (cand2 == cand):
+                    vote_count +=1
+
+            if (vote_count > max_count):
+                max_count = vote_count  
+                winner = cand
+
+            percent = round((vote_count/total_votes)*100 ,2)
+
+            print(f'{cand} : {percent}% ({vote_count})') 
+            print(f'{cand} : {percent}% ({vote_count})',file=out_file) 
             
-    avg_difference = round( difference / ( total_months -1 ) ,2)
-       
-    for i in range(0,len(month)): 
-        
-        if ( i == int(max_index)): 
-            max_month = month[i]
-        
-        if ( i == int(min_index)):
-            min_month = month[i]
-print('Financial Analysis')
-print('--------------------------------')
-print(f'Total Months : {total_months}')
-print(f'Total : ${total_profit}')
-print(f'Average Change : ${avg_difference}')
-print(f'Greatest Increase in Profits: {max_month} $({max_change})')
-print(f'Greatest Decrease in Profits: {min_month} $({min_change})')
+            vote_count = 0
 
-
-with open(output_path,'w') as output_file:
-    print(f'Financial Analysis', file=output_file)
-    print('--------------------------------',file=output_file)
-    print(f'Total Months : {total_months}', file=output_file)
-    print(f'Total : ${total_profit}',file=output_file)
-    print(f'Average Change : ${avg_difference}',file=output_file)
-    print(f'Greatest Increase in Profits: {max_month} $({max_change})',file=output_file)
-    print(f'Greatest Decrease in Profits: {min_month} $({min_change})',file=output_file)
-
+        print('-------------------------------',file = out_file)
+        print('-------------------------------')
+        print(f'Winner : {winner}')
+        print(f'Winner : {winner}',file = out_file)
+        print('-------------------------------',file = out_file)
+        print('-------------------------------')    
+    
+   
+    
+    
